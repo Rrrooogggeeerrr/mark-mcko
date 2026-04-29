@@ -557,11 +557,16 @@ const favoriteWorlds = [
 ];
 
 const defaultProgress = {
+  deviceId: "",
+  visitCount: 0,
+  firstSeenAt: "",
+  lastSeenAt: "",
   totalAnswered: 0,
   totalCorrect: 0,
   totalStars: 0,
   totalXp: 0,
   achievements: [],
+  activityLog: [],
   literature: {
     attempts: 0,
     bestExamPercent: 0,
@@ -603,6 +608,8 @@ const cheatSheet = document.getElementById("cheatSheet");
 const boosterBoard = document.getElementById("boosterBoard");
 
 document.addEventListener("DOMContentLoaded", () => {
+  ensureDeviceId();
+  registerVisit();
   bindEvents();
   render();
 });
@@ -763,6 +770,7 @@ function startSession(mode) {
   state.feedback = null;
   state.hintOpen = false;
   state.session = {
+    id: createSessionId(),
     mode,
     questions,
     index: 0,
@@ -777,6 +785,14 @@ function startSession(mode) {
     remainingSeconds: mode === "exam" ? 45 * 60 : null,
     timedOut: false
   };
+
+  pushActivityEvent({
+    type: "session-start",
+    subject: state.subject,
+    mode,
+    sessionId: state.session.id,
+    questionCount: questions.length
+  });
 
   if (state.session.remainingSeconds !== null) {
     state.timerId = window.setInterval(() => {
@@ -895,6 +911,18 @@ function submitAnswer() {
     explanation: question.explanation
   });
 
+  pushActivityEvent({
+    type: "answer",
+    subject: state.subject,
+    mode: state.session.mode,
+    sessionId: state.session.id,
+    questionId: question.id,
+    theme: question.theme,
+    correct: result.correct,
+    userAnswer: result.userAnswer,
+    correctAnswer: result.correctAnswer
+  });
+
   state.feedback = {
     correct: result.correct,
     title: result.correct ? getSuccessTitle(state.session.currentStreak) : getMissTitle(),
@@ -942,6 +970,17 @@ function finishSession(timedOut) {
 
   clearTimer();
   state.session.timedOut = timedOut;
+  pushActivityEvent({
+    type: "session-end",
+    subject: state.subject,
+    mode: state.session.mode,
+    sessionId: state.session.id,
+    score: state.session.score,
+    total: state.session.questions.length,
+    percent: getSessionPercent(state.session),
+    bestStreak: state.session.bestStreak,
+    timedOut
+  });
   finalizeSessionAchievements();
   updateProgressAfterSession();
   state.view = "results";
@@ -1165,6 +1204,11 @@ function renderStage() {
     return;
   }
 
+  if (state.view === "stats") {
+    stage.innerHTML = renderStatsView();
+    return;
+  }
+
   if (state.view === "quiz") {
     stage.innerHTML = renderQuizView();
     return;
@@ -1315,6 +1359,91 @@ function renderFavoriteWorldsSection() {
             `
           )
           .join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderStatsView() {
+  const accuracy = state.progress.totalAnswered
+    ? Math.round((state.progress.totalCorrect / state.progress.totalAnswered) * 100)
+    : 0;
+  const totalAttempts = state.progress.literature.attempts + state.progress.geography.attempts;
+  const totalViewed = state.progress.literature.cardsViewed + state.progress.geography.cardsViewed;
+  const totalPitfalls = state.progress.literature.pitfallsViewed + state.progress.geography.pitfallsViewed;
+
+  return `
+    <div class="results-header">
+      <div>
+        <p class="eyebrow">Твой прогресс</p>
+        <h2 class="results-title">Как идет подготовка</h2>
+      </div>
+      <span class="theme-chip">только твои результаты</span>
+    </div>
+
+    <p class="home-cheer">
+      ${getNickname()}, здесь видно, что у тебя уже получается хорошо и что еще полезно добить.
+    </p>
+
+    <div class="score-grid">
+      <div class="score-card">
+        <span>Всего попыток</span>
+        <strong class="score-number">${totalAttempts}</strong>
+        <p>литература и география вместе</p>
+      </div>
+      <div class="score-card">
+        <span>Решено вопросов</span>
+        <strong class="score-number">${state.progress.totalAnswered}</strong>
+        <p>правильных: ${state.progress.totalCorrect}</p>
+      </div>
+      <div class="score-card ${getScoreClass(accuracy)}">
+        <span>Общая точность</span>
+        <strong class="score-number">${accuracy}%</strong>
+        <p>по всем тренировкам</p>
+      </div>
+      <div class="score-card">
+        <span>Награды</span>
+        <strong class="score-number">${state.progress.achievements.length}</strong>
+        <p>${state.progress.totalStars} звезд и ${state.progress.totalXp} XP</p>
+      </div>
+    </div>
+
+    <div class="format-grid">
+      <div class="format-card">
+        <strong>Литература</strong>
+        <p>Попыток: ${state.progress.literature.attempts}</p>
+        <p>Лучшая разминка: ${state.progress.literature.bestWarmupPercent}%</p>
+        <p>Лучший мини-МЦКО: ${state.progress.literature.bestExamPercent}%</p>
+        <p>Лучшая серия: ${state.progress.literature.bestStreak}</p>
+      </div>
+      <div class="format-card">
+        <strong>География</strong>
+        <p>Попыток: ${state.progress.geography.attempts}</p>
+        <p>Лучшая разминка: ${state.progress.geography.bestWarmupPercent}%</p>
+        <p>Лучший мини-МЦКО: ${state.progress.geography.bestExamPercent}%</p>
+        <p>Лучшая серия: ${state.progress.geography.bestStreak}</p>
+      </div>
+      <div class="format-card">
+        <strong>Повторение</strong>
+        <p>Карточек просмотрено: ${totalViewed}</p>
+        <p>Ловушек просмотрено: ${totalPitfalls}</p>
+        <p>Наград открыто: ${state.progress.achievements.length}</p>
+        <p>Звезд набрано: ${state.progress.totalStars}</p>
+      </div>
+    </div>
+
+    <div class="mini-grid">
+      <div class="mini-card">
+        <strong>Что уже хорошо</strong>
+        <p>${getChildStatsGoodLine()}</p>
+      </div>
+      <div class="mini-card">
+        <strong>Что еще добить</strong>
+        <p>${getChildStatsFocusLine()}</p>
+      </div>
+      <div class="mini-card">
+        <strong>Что дальше</strong>
+        <p>Если устал, лучше короткая разминка. Если уже собрался, можно идти в мини-МЦКО.</p>
       </div>
     </div>
   `;
@@ -1985,6 +2114,42 @@ function clearTimer() {
   }
 }
 
+function registerVisit() {
+  const now = new Date().toISOString();
+  state.progress.visitCount = Number(state.progress.visitCount || 0) + 1;
+  state.progress.lastSeenAt = now;
+  if (!state.progress.firstSeenAt) {
+    state.progress.firstSeenAt = now;
+  }
+  pushActivityEvent({
+    type: "visit",
+    path: window.location.pathname
+  });
+  saveProgress();
+}
+
+function ensureDeviceId() {
+  if (!state.progress.deviceId) {
+    state.progress.deviceId = `device-${Math.random().toString(36).slice(2, 10)}`;
+    saveProgress();
+  }
+}
+
+function createSessionId() {
+  return `session-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function pushActivityEvent(payload) {
+  const entry = {
+    at: new Date().toISOString(),
+    deviceId: state.progress.deviceId || "",
+    ...payload
+  };
+  const nextLog = Array.isArray(state.progress.activityLog) ? [...state.progress.activityLog, entry] : [entry];
+  state.progress.activityLog = nextLog.slice(-600);
+  saveProgress();
+}
+
 function getLevelInfo(xp) {
   const pointsPerLevel = 40;
   const rawLevel = Math.floor(xp / pointsPerLevel) + 1;
@@ -2003,6 +2168,36 @@ function getLevelInfo(xp) {
 
 function getNickname(offset = 0) {
   return playerProfile.nicknames[(state.progress.totalAnswered + offset) % playerProfile.nicknames.length];
+}
+
+function getChildStatsGoodLine() {
+  if (state.progress.totalAnswered === 0) {
+    return "Старт уже есть. Дальше все начнет собираться после первых попыток.";
+  }
+
+  const accuracy = Math.round((state.progress.totalCorrect / state.progress.totalAnswered) * 100);
+  if (accuracy >= 80) {
+    return "Точность уже хорошая. Видно, что база собирается уверенно.";
+  }
+
+  if (accuracy >= 60) {
+    return "Основа уже есть. Еще немного повторения, и станет совсем спокойно.";
+  }
+
+  return "Главное уже сделано: ты начал, а дальше точность добирается практикой.";
+}
+
+function getChildStatsFocusLine() {
+  const current = state.progress[state.subject];
+  if (current.bestExamPercent < 60) {
+    return `По теме «${appData[state.subject].label}» сейчас полезнее всего пройти еще один мини-МЦКО.`;
+  }
+
+  if (current.bestStreak < 5) {
+    return `По теме «${appData[state.subject].label}» сейчас выгодно добить серию правильных ответов.`;
+  }
+
+  return `По теме «${appData[state.subject].label}» сейчас лучше пройти карточки и ловушки на закрепление.`;
 }
 
 function shuffleArray(items) {
