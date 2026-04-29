@@ -575,52 +575,97 @@ const appData = {
 const storageKey = "mcko-5-trainer-progress";
 const playerProfile = {
   name: "Марк",
-  nicknames: ["сынок", "кот", "Марковка"]
+  nicknames: ["Марк", "сынок", "кот"]
 };
 
 const levelTitles = [
-  "Собиратель первых побед",
-  "Искатель подсказок",
-  "Охотник за звездами",
-  "Уверенный решатель",
-  "Гроза ловушек",
-  "Хранитель знаний",
-  "Мастер маршрута",
-  "Чемпион МЦКО"
+  "Старт",
+  "Разогрев",
+  "Точность",
+  "Уверенность",
+  "Хороший темп",
+  "Сильная база",
+  "Почти готов",
+  "Отличная форма"
 ];
 
 const achievementCatalog = {
   streak3: {
     key: "streak3",
-    name: "Искра серии",
+    name: "Серия x3",
     description: "3 правильных ответа подряд"
   },
   streak5: {
     key: "streak5",
-    name: "Ракета серии",
+    name: "Серия x5",
     description: "5 правильных ответов подряд"
   },
   streak8: {
     key: "streak8",
-    name: "Легенда серии",
+    name: "Серия x8",
     description: "8 правильных ответов подряд"
   },
   "literature-ace": {
     key: "literature-ace",
-    name: "Повелитель троп",
+    name: "Литература 80+",
     description: "80% и выше в мини-МЦКО по литературе"
   },
   "geography-ace": {
     key: "geography-ace",
-    name: "Командир карты",
+    name: "География 80+",
     description: "80% и выше в мини-МЦКО по географии"
   },
   "perfect-run": {
     key: "perfect-run",
-    name: "Безупречный проход",
+    name: "Без ошибок",
     description: "100% в тренировке"
   }
 };
+
+const favoriteWorlds = [
+  {
+    title: "Minecraft",
+    kicker: "любимое",
+    text: "Спокойно строим базу знаний по блоку: термин, герой, правило, ответ.",
+    className: "world-minecraft"
+  },
+  {
+    title: "Brawl Stars",
+    kicker: "короткий раунд",
+    text: "Небольшие заходы, быстрые ответы и звезды за хороший темп.",
+    className: "world-brawl"
+  },
+  {
+    title: "Standoff 2",
+    kicker: "точность",
+    text: "Не спешим: сначала прицеливаемся в правило, потом выбираем ответ.",
+    className: "world-standoff"
+  },
+  {
+    title: "Roblox",
+    kicker: "разные режимы",
+    text: "Можно пройти разминку, карточки или ловушки как разные игровые режимы.",
+    className: "world-roblox"
+  },
+  {
+    title: "Football Club 2026",
+    kicker: "матч",
+    text: "Есть таймер, серия и счет, как хороший матч, только по учебе.",
+    className: "world-football"
+  },
+  {
+    title: "Fortnite",
+    kicker: "собраться и решить",
+    text: "На сложных вопросах важно быстро собраться и не потерять внимание.",
+    className: "world-fortnite"
+  },
+  {
+    title: "Флорбол",
+    kicker: "скорость и реакция",
+    text: "Смотрим внимательно, реагируем быстро и держим хороший ритм.",
+    className: "world-floorball"
+  }
+];
 
 const defaultProgress = {
   totalAnswered: 0,
@@ -1137,14 +1182,14 @@ function renderSidebar() {
       ${renderLevelMeter(levelInfo)}
     </div>
     <div class="stats-card">
-      <span>Всего звезд</span>
+      <span>Звезды</span>
       <strong>${state.progress.totalStars}</strong>
       <p>${formatStarsLine(state.progress.totalStars)}</p>
     </div>
     <div class="stats-card">
       <span>Точность по всем тренировкам</span>
       <strong>${accuracy}%</strong>
-      <p>Каждый ответ добавляет уверенности, ${getNickname(1)}.</p>
+      <p>Спокойно и точно, ${getNickname(1)}.</p>
     </div>
     <div class="stats-card">
       <span>Лучшая серия подряд</span>
@@ -1154,7 +1199,7 @@ function renderSidebar() {
     <div class="stats-card">
       <span>Награды</span>
       <strong>${achievementCount}</strong>
-      <p>Лучший мини-МЦКО: ${subjectProgress.bestExamPercent}%</p>
+      <p>Лучший большой матч: ${subjectProgress.bestExamPercent}%</p>
     </div>
     <div class="stats-card">
       <span>Попыток по предмету</span>
@@ -1164,7 +1209,7 @@ function renderSidebar() {
   `;
 
   reminderBox.innerHTML = `
-    <p class="muted"><span class="accent">${playerProfile.name}</span>, ${getNickname(2)}, сейчас прокачиваем <span class="accent">${subjectData.accent}</span>.</p>
+    <p class="muted"><span class="accent">${playerProfile.name}</span>, ${getNickname(2)}, сейчас тренируем <span class="accent">${subjectData.accent}</span>.</p>
     <p class="note-strong">${getSubjectPepTalk(state.subject)}</p>
     <ul class="reminder-list">
       ${subjectData.booster.slice(0, 3).map((item) => `<li>${item}</li>`).join("")}
@@ -1195,7 +1240,7 @@ function renderSupport() {
 
   boosterBoard.innerHTML = `
     <div class="headline-row">
-      <h3>Звездный план Марковки</h3>
+      <h3>План для Марка</h3>
       <span class="theme-chip">${subjectData.examDate}</span>
     </div>
     <div class="booster-grid">
@@ -1203,7 +1248,7 @@ function renderSupport() {
         .map(
           (item, index) => `
             <div class="booster-card">
-              <strong>Звездный шаг ${index + 1}</strong>
+              <strong>Шаг ${index + 1}</strong>
               <p>${item}</p>
             </div>
           `
@@ -1248,7 +1293,7 @@ function renderHomeView() {
       <div class="story-card">
         <div class="headline-row">
           <div>
-            <p class="eyebrow">Игровой режим для Марка</p>
+            <p class="eyebrow">Подготовка для Марка</p>
             <h2>${getHomeHeadline()}</h2>
           </div>
           <div class="badge-row">
@@ -1266,15 +1311,19 @@ function renderHomeView() {
             <p>${levelInfo.title}</p>
           </div>
           <div class="game-card">
-            <span>Копилка звезд</span>
+            <span>Звезды</span>
             <strong>${state.progress.totalStars}</strong>
             <p>${formatStarsLine(state.progress.totalStars)}</p>
           </div>
           <div class="game-card">
             <span>Награды</span>
             <strong>${state.progress.achievements.length}</strong>
-            <p>${latestAchievements.length ? latestAchievements.map((item) => item.name).join(", ") : "Первая награда уже рядом."}</p>
+            <p>${latestAchievements.length ? latestAchievements.map((item) => item.name).join(", ") : "Первая награда уже близко."}</p>
           </div>
+        </div>
+        <div class="arena-note">
+          <strong>Режим дня</strong>
+          <p>${getArenaModeLine(state.subject)}</p>
         </div>
         <ul>
           ${subjectData.overview.slice(1).map((item) => `<li>${item}</li>`).join("")}
@@ -1291,13 +1340,13 @@ function renderHomeView() {
 
       <div class="outline-card">
         <div class="headline-row">
-          <h3>Маршрут побед</h3>
+          <h3>План тренировки</h3>
           <span class="hero-number">${subjectData.questions.length}</span>
         </div>
         <p>${getHomeMissionLine(subjectData.label)}</p>
         <ul>
           <li>Разминка: 5 быстрых вопросов с моментальной проверкой.</li>
-          <li>Мини-МЦКО: ${subjectData.examCount} вопросов в формате, близком к работе.</li>
+          <li>Большой матч: ${subjectData.examCount} вопросов в формате, близком к работе.</li>
           <li>Карточки: термины, даты, герои и формулы.</li>
           <li>Ловушки: короткие задания на самые частые ошибки.</li>
         </ul>
@@ -1309,6 +1358,8 @@ function renderHomeView() {
         ` : ""}
       </div>
     </div>
+
+    ${renderFavoriteWorldsSection()}
 
     <div class="format-grid">
       ${subjectData.formatCards
@@ -1325,16 +1376,43 @@ function renderHomeView() {
 
     <div class="mini-grid">
       <div class="mini-card">
-        <strong>Для ребенка</strong>
+        <strong>Как ему удобнее</strong>
         <p>Лучше идти короткими заходами: 5 вопросов, 5 карточек, 1 ловушка, потом маленькая пауза.</p>
       </div>
       <div class="mini-card">
-        <strong>Для родителя</strong>
-        <p>После ошибки просите объяснить правило своими словами, а не просто назвать ответ.</p>
+        <strong>Как поддержать</strong>
+        <p>После ошибки лучше попросить объяснить правило своими словами, а не просто назвать ответ.</p>
       </div>
       <div class="mini-card">
-        <strong>Сигнал прогресса</strong>
+        <strong>Когда уже хорошо</strong>
         <p>Если в мини-МЦКО уже 75% и выше, можно переходить к повторению слабых мест и скорости.</p>
+      </div>
+    </div>
+  `;
+}
+
+function renderFavoriteWorldsSection() {
+  return `
+    <div class="world-section">
+      <div class="headline-row">
+        <div>
+          <p class="eyebrow">Что ему нравится</p>
+          <h3>Любимые миры Марка</h3>
+        </div>
+        <span class="theme-chip">игры и флорбол</span>
+      </div>
+      <div class="world-grid">
+        ${favoriteWorlds
+          .map(
+            (item) => `
+              <article class="world-card ${item.className}">
+                <span class="world-kicker ${item.kicker === "любимое" ? "world-kicker-fav" : ""}">${item.kicker}</span>
+                <strong>${item.title}</strong>
+                <p>${item.text}</p>
+              </article>
+            `
+          )
+          .join("")}
       </div>
     </div>
   `;
@@ -1358,7 +1436,7 @@ function renderQuizView() {
   return `
     <div class="results-header">
       <div>
-        <p class="eyebrow">${state.session.mode === "exam" ? "Мини-МЦКО" : "Разминка"}</p>
+        <p class="eyebrow">${state.session.mode === "exam" ? "Большой матч" : "Короткий раунд"}</p>
         <h2 class="question-title">Вопрос ${state.session.index + 1} из ${state.session.questions.length}</h2>
       </div>
       ${
@@ -1506,7 +1584,7 @@ function renderResultsView() {
         <h2 class="results-title">${getResultsHeadline(percent)}</h2>
         <p class="home-cheer">${getResultsSupportLine(percent, missedCount)}</p>
       </div>
-      <span class="theme-chip">${state.session.mode === "exam" ? "Мини-МЦКО" : "Разминка"}</span>
+      <span class="theme-chip">${state.session.mode === "exam" ? "Большой матч" : "Короткий раунд"}</span>
     </div>
 
     <div class="score-grid">
@@ -1516,14 +1594,14 @@ function renderResultsView() {
         <p>${percent}% правильных ответов.</p>
       </div>
       <div class="score-card">
-        <span>Звезды за проход</span>
+        <span>Звезды за раунд</span>
         <div class="score-number score-good">${state.session.starsEarned}</div>
         <p>${formatStarsLine(state.session.starsEarned)}</p>
       </div>
       <div class="score-card">
         <span>XP за проход</span>
         <div class="score-number">${state.session.xpEarned}</div>
-        <p>Текущий уровень Марка: ${levelInfo.level}</p>
+        <p>Текущий уровень: ${levelInfo.level}</p>
       </div>
       <div class="score-card">
         <span>Лучшая серия</span>
@@ -1540,7 +1618,7 @@ function renderResultsView() {
       state.session.badgesEarned.length
         ? `
           <div class="results-card achievement-block">
-            <strong>Новые награды Марка</strong>
+            <strong>Новые награды</strong>
             <p>Вот что открылось в этой тренировке.</p>
             ${renderAchievementPills(state.session.badgesEarned)}
           </div>
@@ -1593,7 +1671,7 @@ function renderFlashcardsView() {
   return `
     <div class="flashcard-top">
       <div>
-        <p class="eyebrow">Карточки</p>
+        <p class="eyebrow">Быстрый повтор</p>
         <h2 class="flashcard-title">${subjectData.label}: быстрое повторение</h2>
         <p class="home-cheer">${playerProfile.name}, ${getNickname()}, сначала попробуй ответить сам, а потом переворачивай карточку.</p>
       </div>
@@ -1631,7 +1709,7 @@ function renderPitfallsView() {
   return `
     <div class="pitfall-top">
       <div>
-        <p class="eyebrow">Ловушки</p>
+        <p class="eyebrow">Сложные места</p>
         <h2 class="pitfall-title">${pitfall.title}</h2>
         <p class="home-cheer">${getMissCheer(pitfall.title)}</p>
       </div>
@@ -1695,9 +1773,9 @@ function getRewardForStreak(streak) {
   };
 
   const streakRewards = {
-    3: { stars: 2, xp: 8, label: "Искра серии", key: "streak3" },
-    5: { stars: 3, xp: 12, label: "Ракета серии", key: "streak5" },
-    8: { stars: 5, xp: 18, label: "Легенда серии", key: "streak8" }
+    3: { stars: 2, xp: 8, label: "Серия x3", key: "streak3" },
+    5: { stars: 3, xp: 12, label: "Серия x5", key: "streak5" },
+    8: { stars: 5, xp: 18, label: "Серия x8", key: "streak8" }
   };
 
   const bonus = streakRewards[streak];
@@ -1844,33 +1922,33 @@ function renderAchievementPills(achievements) {
 
 function getSuccessTitle(streak) {
   if (streak >= 8) {
-    return `Огонь, ${getNickname()}!`;
+    return `Отлично, ${getNickname()}!`;
   }
 
   if (streak >= 5) {
-    return `Вот это серия, ${getNickname()}!`;
+    return `Молодец, ${getNickname()}!`;
   }
 
   if (streak >= 3) {
-    return `Сильный ход, ${getNickname()}!`;
+    return `Хорошо идешь, ${getNickname()}!`;
   }
 
   return `Верно, ${getNickname()}!`;
 }
 
 function getMissTitle() {
-  return `Спокойно, ${getNickname()}: это тренировка.`;
+  return `Ничего, ${getNickname()}, это тренировка.`;
 }
 
 function getSuccessCheer(theme, reward) {
   const lines = [
-    `${playerProfile.name}, ${getNickname(1)}, ты поймал тему «${theme}» и забрал ${reward.stars} звезд.`,
-    `${getNickname(2)}, отлично. Еще один точный ответ в копилку.`,
-    `${playerProfile.name}, так держать. Видно, что ты уже крепче держишь материал.`
+    `${playerProfile.name}, ${getNickname(1)}, хорошо. По теме «${theme}» ты попал точно.`,
+    `${getNickname(2)}, молодец. Еще один правильный ответ в копилку.`,
+    `${playerProfile.name}, так держать. Уже видно, что ты лучше ориентируешься в материале.`
   ];
 
   if (reward.levelUp) {
-    return `${lines[0]} Новый уровень открыт: ${reward.levelUp.level}, ${reward.levelUp.title}.`;
+    return `${lines[0]} Открылся новый уровень: ${reward.levelUp.level}, ${reward.levelUp.title}.`;
   }
 
   return lines[(state.progress.totalCorrect + theme.length) % lines.length];
@@ -1878,84 +1956,92 @@ function getSuccessCheer(theme, reward) {
 
 function getMissCheer(theme) {
   const lines = [
-    `${getNickname()}, здесь можно ошибаться. Сейчас разберем правило и возьмем следующую звезду.`,
-    `${playerProfile.name}, это просто тренировочная кочка на маршруте по теме «${theme}».`,
-    `${getNickname(1)}, не спешим: посмотрим ответ, запомним ход и пойдем дальше увереннее.`
+    `${getNickname()}, ошибаться здесь нормально. Сейчас спокойно разберем правило.`,
+    `${playerProfile.name}, по теме «${theme}» просто нужна еще одна спокойная попытка.`,
+    `${getNickname(1)}, не спешим: посмотрим ответ и дальше будет легче.`
   ];
 
   return lines[(state.progress.totalAnswered + theme.length) % lines.length];
 }
 
 function getQuestionPepLine(theme) {
-  const subjectLine =
+  const lines =
     state.subject === "literature"
-      ? "Смотри на ключевые слова, образ и героя."
-      : "Сначала правило, потом ответ: карта любит спокойствие.";
-  return `${playerProfile.name}, ${getNickname()}, сейчас тема «${theme}». ${subjectLine}`;
+      ? [
+          "Как в Minecraft: спокойно строим базу из терминов и героев.",
+          "Как в Brawl Stars: вопрос короткий, значит ответ тоже можно найти быстро.",
+          "Как во флорболе: внимание на слово, потом движение дальше."
+        ]
+      : [
+          "Как в Standoff 2: сначала прицел в правило, потом выбор.",
+          "Как в Football Club 2026: смотри на все поле задачи и делай точный ход.",
+          "Как в Minecraft: по блоку собираем карту, координаты и формулы."
+        ];
+  return `${playerProfile.name}, ${getNickname()}, сейчас тема «${theme}». ${lines[(state.session?.index || 0) % lines.length]}`;
 }
 
 function getHomeHeadline() {
   return state.subject === "literature"
-    ? `${playerProfile.name}, ${getNickname()}, сегодня ловим тропы, героев и уверенность`
-    : `${playerProfile.name}, ${getNickname()}, сегодня собираем карту, координаты и звезды`;
+    ? `${playerProfile.name}, сегодня повторяем тропы, героев и термины`
+    : `${playerProfile.name}, сегодня повторяем карту, координаты и формулы`;
 }
 
 function getHomeSupportLine() {
   const subjectLine =
     state.subject === "literature"
-      ? "Сынок, здесь каждая правильная мысль превращается в звезды, а сложные тропы становятся понятнее шаг за шагом."
-      : "Кот, здесь каждая точная координата и формула дает новую звезду, а карта постепенно становится твоей."
+      ? "Сынок, здесь все как ты любишь: сначала спокойно строим базу, как в Minecraft, а потом добираем темп короткими раундами."
+      : "Кот, здесь главное точность и внимание: немного как в Standoff 2, немного как в футбольном матче, только по географии."
   return subjectLine;
 }
 
 function getHomeMissionLine(subjectLabel) {
-  return `${playerProfile.name}, маршрут по предмету «${subjectLabel}» уже готов: короткие заходы, быстрые победы и спокойный разбор ошибок без спешки.`;
+  return `${playerProfile.name}, все уже готово для занятия по предмету «${subjectLabel}»: короткие задания, повторение и спокойный разбор ошибок.`;
 }
 
 function getResultsHeadline(percent) {
   if (percent >= 85) {
-    return `${playerProfile.name}, ${getNickname()}, это был очень мощный проход`;
+    return `${playerProfile.name}, очень хороший результат`;
   }
 
   if (percent >= 60) {
-    return `${playerProfile.name}, хороший рывок. Уже видно крепкую базу`;
+    return `${playerProfile.name}, уже хорошо получается`;
   }
 
-  return `${playerProfile.name}, старт положен. Сейчас соберем еще больше уверенности`;
+  return `${playerProfile.name}, начало хорошее`;
 }
 
 function getResultsSupportLine(percent, missedCount) {
   if (percent >= 85) {
-    return `${getNickname()}, ты отлично держишь темп. ${missedCount ? `Осталось только не бросать пустые задания.` : "Можно идти за новой высотой."}`;
+    return `${getNickname()}, молодец. ${missedCount ? `Нужно только не пропускать задания.` : "Можно переходить к следующему этапу."}`;
   }
 
   if (percent >= 60) {
-    return `${getNickname()}, уже хорошо. Пара точных повторений по ловушкам, и будет еще сильнее.`;
+    return `${getNickname()}, уже неплохо. Еще немного повторения, и будет совсем уверенно.`;
   }
 
-  return `${getNickname()}, все нормально: тренировка как раз для того и нужна, чтобы спокойно поймать слабые места.`;
+  return `${getNickname()}, все нормально. Тренировка как раз нужна для того, чтобы спокойно увидеть, что еще повторить.`;
 }
 
 function getSubjectPepTalk(subject) {
   return subject === "literature"
-    ? "Сегодня собираем слова, образы и героев в одну сильную цепочку."
-    : "Сегодня тренируем глаз на карту и уверенную голову на формулы.";
+    ? "Сегодня работаем как в Minecraft и Brawl Stars: сначала база, потом быстрые точные ответы."
+    : "Сегодня работаем как в Standoff 2, Football Club и флорболе: точность, обзор и хороший темп.";
 }
 
 function getNextStreakGoalText(streak) {
   if (streak < 3) {
-    return `До первой награды серии: ${3 - streak}`;
+    return `До первой награды: ${3 - streak}`;
   }
 
   if (streak < 5) {
-    return `Еще ${5 - streak} до новой награды`;
+    return `Еще ${5 - streak} до следующей награды`;
   }
 
   if (streak < 8) {
-    return `Еще ${8 - streak} до легендарной серии`;
+    return `Еще ${8 - streak} до большой серии`;
   }
 
-  return "Серия горит ярко, продолжай!";
+  return "Серия идет хорошо, продолжай.";
 }
 
 function getSessionPercent(session) {
@@ -1964,22 +2050,28 @@ function getSessionPercent(session) {
 
 function formatStarsLine(count) {
   if (!count) {
-    return "Первая звезда уже совсем рядом.";
+    return "Первая звезда уже рядом.";
   }
 
   if (count < 5) {
-    return "Копилка разогревается.";
+    return "Понемногу набираем.";
   }
 
   if (count < 20) {
-    return "Звезды уже хорошо собираются.";
+    return "Звезды хорошо набираются.";
   }
 
-  return "Настоящий звездный запас.";
+  return "Уже хороший запас звезд.";
 }
 
 function getMistakePepLine() {
-  return `${getNickname()}, одна спокойная подсказка сейчас экономит ошибку на работе.`;
+  return `${getNickname()}, сейчас главное спокойно понять правило и попробовать еще раз.`;
+}
+
+function getArenaModeLine(subject) {
+  return subject === "literature"
+    ? "Сегодня режим Minecraft + Brawl Stars: сначала собираем базу по терминам и героям, потом быстро добираем правильные ответы."
+    : "Сегодня режим Standoff 2 + Football Club 2026 + флорбол: видим поле, держим точность и не суетимся на формулах.";
 }
 
 function feedbackOptionClass(question, optionIndex) {
