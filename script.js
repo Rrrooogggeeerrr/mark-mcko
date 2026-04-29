@@ -1176,7 +1176,7 @@ function renderSidebar() {
 
   statsBox.innerHTML = `
     <div class="stats-card level-card">
-      <span>Уровень Марка</span>
+      <span>Твой уровень</span>
       <strong>${levelInfo.level}</strong>
       <p>${levelInfo.title}</p>
       ${renderLevelMeter(levelInfo)}
@@ -1209,7 +1209,7 @@ function renderSidebar() {
   `;
 
   reminderBox.innerHTML = `
-    <p class="muted"><span class="accent">${playerProfile.name}</span>, ${getNickname(2)}, сейчас тренируем <span class="accent">${subjectData.accent}</span>.</p>
+    <p class="muted">${getNickname(2)}, сейчас тренируем <span class="accent">${subjectData.accent}</span>.</p>
     <p class="note-strong">${getSubjectPepTalk(state.subject)}</p>
     <ul class="reminder-list">
       ${subjectData.booster.slice(0, 3).map((item) => `<li>${item}</li>`).join("")}
@@ -1221,7 +1221,7 @@ function renderSupport() {
   const subjectData = appData[state.subject];
   cheatSheet.innerHTML = `
     <div class="headline-row">
-      <h3>Шпаргалка для Марка</h3>
+      <h3>Шпаргалка</h3>
       <span class="theme-chip">${subjectData.label}</span>
     </div>
     <div class="shortcut-grid">
@@ -1240,7 +1240,7 @@ function renderSupport() {
 
   boosterBoard.innerHTML = `
     <div class="headline-row">
-      <h3>План для Марка</h3>
+      <h3>План</h3>
       <span class="theme-chip">${subjectData.examDate}</span>
     </div>
     <div class="booster-grid">
@@ -1293,11 +1293,11 @@ function renderHomeView() {
       <div class="story-card">
         <div class="headline-row">
           <div>
-            <p class="eyebrow">Подготовка для Марка</p>
+            <p class="eyebrow">Это для тебя</p>
             <h2>${getHomeHeadline()}</h2>
           </div>
           <div class="badge-row">
-            <span class="subject-badge"><strong>${playerProfile.name}</strong></span>
+            <span class="subject-badge"><strong>для тебя</strong></span>
             <span class="subject-badge">Уровень ${levelInfo.level}</span>
             <span class="subject-badge">${state.progress.totalStars} звезд</span>
           </div>
@@ -1376,12 +1376,12 @@ function renderHomeView() {
 
     <div class="mini-grid">
       <div class="mini-card">
-        <strong>Как ему удобнее</strong>
+        <strong>Как тебе удобнее</strong>
         <p>Лучше идти короткими заходами: 5 вопросов, 5 карточек, 1 ловушка, потом маленькая пауза.</p>
       </div>
       <div class="mini-card">
-        <strong>Как поддержать</strong>
-        <p>После ошибки лучше попросить объяснить правило своими словами, а не просто назвать ответ.</p>
+        <strong>Как себе помочь</strong>
+        <p>После ошибки лучше вслух объяснить правило своими словами, а не просто посмотреть ответ.</p>
       </div>
       <div class="mini-card">
         <strong>Когда уже хорошо</strong>
@@ -1463,7 +1463,7 @@ function renderQuizView() {
         <p>${getNextStreakGoalText(state.session.currentStreak)}</p>
       </div>
       <div class="game-card">
-        <span>XP Марка</span>
+        <span>Твой XP</span>
         <strong>${state.progress.totalXp}</strong>
         <p>До уровня ${levelInfo.level + 1}: ${Math.max(levelInfo.nextXp - state.progress.totalXp, 0)} XP</p>
       </div>
@@ -1648,7 +1648,7 @@ function renderResultsView() {
         : `
           <div class="results-card">
             <strong>Ошибок нет</strong>
-            <p>${playerProfile.name}, ${getNickname(1)}, это был очень сильный проход. Можно закрепить успех карточками или сразу перейти к другому предмету.</p>
+            <p>${getNickname(1)}, это был очень сильный проход. Можно закрепить успех карточками или сразу перейти к другому предмету.</p>
           </div>
         `
     }
@@ -1673,7 +1673,7 @@ function renderFlashcardsView() {
       <div>
         <p class="eyebrow">Быстрый повтор</p>
         <h2 class="flashcard-title">${subjectData.label}: быстрое повторение</h2>
-        <p class="home-cheer">${playerProfile.name}, ${getNickname()}, сначала попробуй ответить сам, а потом переворачивай карточку.</p>
+        <p class="home-cheer">${getNickname()}, сначала попробуй ответить сам, а потом переворачивай карточку.</p>
       </div>
       <span class="theme-chip">${state.flashcardIndex + 1} / ${subjectData.flashcards.length}</span>
     </div>
@@ -1942,9 +1942,9 @@ function getMissTitle() {
 
 function getSuccessCheer(theme, reward) {
   const lines = [
-    `${playerProfile.name}, ${getNickname(1)}, хорошо. По теме «${theme}» ты попал точно.`,
+    `${getNickname(1)}, хорошо. По теме «${theme}» ты попал точно.`,
     `${getNickname(2)}, молодец. Еще один правильный ответ в копилку.`,
-    `${playerProfile.name}, так держать. Уже видно, что ты лучше ориентируешься в материале.`
+    `${getNickname()}, так держать. Уже видно, что ты лучше ориентируешься в материале.`
   ];
 
   if (reward.levelUp) {
@@ -1957,7 +1957,7 @@ function getSuccessCheer(theme, reward) {
 function getMissCheer(theme) {
   const lines = [
     `${getNickname()}, ошибаться здесь нормально. Сейчас спокойно разберем правило.`,
-    `${playerProfile.name}, по теме «${theme}» просто нужна еще одна спокойная попытка.`,
+    `${getNickname()}, по теме «${theme}» просто нужна еще одна спокойная попытка.`,
     `${getNickname(1)}, не спешим: посмотрим ответ и дальше будет легче.`
   ];
 
@@ -1977,13 +1977,13 @@ function getQuestionPepLine(theme) {
           "Смотри на всю задачу и делай точный ход.",
           "По шагам собираем карту, координаты и формулы."
         ];
-  return `${playerProfile.name}, ${getNickname()}, сейчас тема «${theme}». ${lines[(state.session?.index || 0) % lines.length]}`;
+  return `${getNickname()}, сейчас тема «${theme}». ${lines[(state.session?.index || 0) % lines.length]}`;
 }
 
 function getHomeHeadline() {
   return state.subject === "literature"
-    ? `${playerProfile.name}, сегодня повторяем тропы, героев и термины`
-    : `${playerProfile.name}, сегодня повторяем карту, координаты и формулы`;
+    ? "Сегодня повторяем тропы, героев и термины"
+    : "Сегодня повторяем карту, координаты и формулы";
 }
 
 function getHomeSupportLine() {
@@ -1995,19 +1995,19 @@ function getHomeSupportLine() {
 }
 
 function getHomeMissionLine(subjectLabel) {
-  return `${playerProfile.name}, все уже готово для занятия по предмету «${subjectLabel}»: короткие задания, повторение и спокойный разбор ошибок.`;
+  return `У тебя уже все готово для занятия по предмету «${subjectLabel}»: короткие задания, повторение и спокойный разбор ошибок.`;
 }
 
 function getResultsHeadline(percent) {
   if (percent >= 85) {
-    return `${playerProfile.name}, очень хороший результат`;
+    return "Очень хороший результат";
   }
 
   if (percent >= 60) {
-    return `${playerProfile.name}, уже хорошо получается`;
+    return "Уже хорошо получается";
   }
 
-  return `${playerProfile.name}, начало хорошее`;
+  return "Начало хорошее";
 }
 
 function getResultsSupportLine(percent, missedCount) {
@@ -2110,7 +2110,7 @@ function recommendNextStep(percent) {
   }
 
   if (percent >= 60) {
-    return `${playerProfile.name}, открой блок «Ловушки», а потом снова реши мини-МЦКО.`;
+    return `${getNickname()}, открой блок «Ловушки», а потом снова реши мини-МЦКО.`;
   }
 
   return `${getNickname()}, лучше пройти карточки и разобрать ошибки по темам, а потом запустить новую разминку.`;
