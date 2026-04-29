@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Марк, вперед за звездами - тренажер МЦКО 5 класс</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="background-layer background-a"></div>
+    <div class="background-layer background-b"></div>
+    <div class="paper-grain"></div>
+
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Интерактивный тренажер</p>
+          <h1>Марк, вперед за звездами</h1>
+          <p class="hero-text">
+            Игровая подготовка к МЦКО по литературе и географии для 5 класса:
+            звезды, уровни, награды за серии правильных ответов и теплые
+            подсказки для Марка на каждом шаге.
+          </p>
+        </div>
+
+        <div class="hero-pills">
+          <div class="hero-pill">
+            <span class="pill-label">Литература</span>
+            <strong>18 мая 2026</strong>
+            <span>11 заданий, 45 минут</span>
+          </div>
+          <div class="hero-pill">
+            <span class="pill-label">География</span>
+            <strong>20 мая 2026</strong>
+            <span>14 заданий, 45 минут, атлас разрешен</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="sidebar">
+          <section class="panel">
+            <p class="panel-title">Предмет</p>
+            <div class="subject-switch" role="tablist" aria-label="Выбор предмета">
+              <button
+                class="subject-tab active"
+                type="button"
+                data-subject="literature"
+              >
+                Литература
+              </button>
+              <button class="subject-tab" type="button" data-subject="geography">
+                География
+              </button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <p class="panel-title">Режимы</p>
+            <div class="mode-stack">
+              <button class="mode-button active" type="button" data-view="home">
+                Главная
+              </button>
+              <button class="mode-button" type="button" data-action="start-session" data-mode="warmup">
+                Разминка на 5 вопросов
+              </button>
+              <button class="mode-button" type="button" data-action="start-session" data-mode="exam">
+                Мини-МЦКО
+              </button>
+              <button class="mode-button" type="button" data-view="flashcards">
+                Карточки
+              </button>
+              <button class="mode-button" type="button" data-view="pitfalls">
+                Ловушки
+              </button>
+            </div>
+          </section>
+
+          <section class="panel stats-panel">
+            <p class="panel-title">Прогресс</p>
+            <div id="statsBox"></div>
+          </section>
+
+          <section class="panel note-panel">
+            <p class="panel-title">Фокус дня</p>
+            <div id="reminderBox"></div>
+          </section>
+        </aside>
+
+        <section class="content">
+          <article class="panel stage-panel">
+            <div id="stage" aria-live="polite"></div>
+          </article>
+
+          <div class="support-grid">
+            <article class="panel support-panel">
+              <div id="cheatSheet"></div>
+            </article>
+            <article class="panel support-panel">
+              <div id="boosterBoard"></div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <noscript>
+      Для работы тренажера нужен JavaScript. Откройте страницу в браузере с
+      включенным JavaScript.
+    </noscript>
+  </body>
+</html>
