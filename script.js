@@ -624,43 +624,43 @@ const achievementCatalog = {
 
 const favoriteWorlds = [
   {
-    title: "Minecraft",
-    kicker: "любимое",
+    title: "Блочный ритм",
+    kicker: "спокойно по шагам",
     text: "Спокойно строим базу знаний по блоку: термин, герой, правило, ответ.",
     className: "world-minecraft"
   },
   {
-    title: "Brawl Stars",
+    title: "Короткий раунд",
     kicker: "короткий раунд",
     text: "Небольшие заходы, быстрые ответы и звезды за хороший темп.",
     className: "world-brawl"
   },
   {
-    title: "Standoff 2",
+    title: "Точность",
     kicker: "точность",
     text: "Не спешим: сначала прицеливаемся в правило, потом выбираем ответ.",
     className: "world-standoff"
   },
   {
-    title: "Roblox",
+    title: "Разные режимы",
     kicker: "разные режимы",
     text: "Можно пройти разминку, карточки или ловушки как разные игровые режимы.",
     className: "world-roblox"
   },
   {
-    title: "Football Club 2026",
+    title: "Матч",
     kicker: "матч",
     text: "Есть таймер, серия и счет, как хороший матч, только по учебе.",
     className: "world-football"
   },
   {
-    title: "Fortnite",
+    title: "Собраться и решить",
     kicker: "собраться и решить",
     text: "На сложных вопросах важно быстро собраться и не потерять внимание.",
     className: "world-fortnite"
   },
   {
-    title: "Флорбол",
+    title: "Скорость и реакция",
     kicker: "скорость и реакция",
     text: "Смотрим внимательно, реагируем быстро и держим хороший ритм.",
     className: "world-floorball"
@@ -1396,10 +1396,10 @@ function renderFavoriteWorldsSection() {
     <div class="world-section">
       <div class="headline-row">
         <div>
-          <p class="eyebrow">Что ему нравится</p>
-          <h3>Любимые миры Марка</h3>
+          <p class="eyebrow">Стиль тренажера</p>
+          <h3>Как устроены режимы</h3>
         </div>
-        <span class="theme-chip">игры и флорбол</span>
+        <span class="theme-chip">ритм и темп</span>
       </div>
       <div class="world-grid">
         ${favoriteWorlds
@@ -1968,14 +1968,14 @@ function getQuestionPepLine(theme) {
   const lines =
     state.subject === "literature"
       ? [
-          "Как в Minecraft: спокойно строим базу из терминов и героев.",
-          "Как в Brawl Stars: вопрос короткий, значит ответ тоже можно найти быстро.",
-          "Как во флорболе: внимание на слово, потом движение дальше."
+          "Спокойно собираем базу из терминов и героев.",
+          "Вопрос короткий, значит и ответ можно найти быстро.",
+          "Внимание на слово, потом идем дальше."
         ]
       : [
-          "Как в Standoff 2: сначала прицел в правило, потом выбор.",
-          "Как в Football Club 2026: смотри на все поле задачи и делай точный ход.",
-          "Как в Minecraft: по блоку собираем карту, координаты и формулы."
+          "Сначала прицел в правило, потом выбор.",
+          "Смотри на всю задачу и делай точный ход.",
+          "По шагам собираем карту, координаты и формулы."
         ];
   return `${playerProfile.name}, ${getNickname()}, сейчас тема «${theme}». ${lines[(state.session?.index || 0) % lines.length]}`;
 }
@@ -1989,8 +1989,8 @@ function getHomeHeadline() {
 function getHomeSupportLine() {
   const subjectLine =
     state.subject === "literature"
-      ? "Сынок, здесь все как ты любишь: сначала спокойно строим базу, как в Minecraft, а потом добираем темп короткими раундами."
-      : "Кот, здесь главное точность и внимание: немного как в Standoff 2, немного как в футбольном матче, только по географии."
+      ? "Сынок, сначала спокойно разбираем основу, а потом добираем темп короткими раундами."
+      : "Кот, здесь главное точность и внимание: спокойно смотрим на задачу и идем по шагам."
   return subjectLine;
 }
 
@@ -2024,8 +2024,8 @@ function getResultsSupportLine(percent, missedCount) {
 
 function getSubjectPepTalk(subject) {
   return subject === "literature"
-    ? "Сегодня работаем как в Minecraft и Brawl Stars: сначала база, потом быстрые точные ответы."
-    : "Сегодня работаем как в Standoff 2, Football Club и флорболе: точность, обзор и хороший темп.";
+    ? "Сегодня работаем так: сначала база, потом быстрые точные ответы."
+    : "Сегодня работаем так: точность, обзор и хороший темп.";
 }
 
 function getNextStreakGoalText(streak) {
@@ -2070,8 +2070,8 @@ function getMistakePepLine() {
 
 function getArenaModeLine(subject) {
   return subject === "literature"
-    ? "Сегодня режим Minecraft + Brawl Stars: сначала собираем базу по терминам и героям, потом быстро добираем правильные ответы."
-    : "Сегодня режим Standoff 2 + Football Club 2026 + флорбол: видим поле, держим точность и не суетимся на формулах.";
+    ? "Сегодня режим такой: сначала собираем базу по терминам и героям, потом быстро добираем правильные ответы."
+    : "Сегодня режим такой: видим всю задачу, держим точность и не суетимся на формулах.";
 }
 
 function feedbackOptionClass(question, optionIndex) {
